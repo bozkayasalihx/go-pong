@@ -34,14 +34,35 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
   printBorders()
+  data := make([]byte, 0, 64)
 loop:
 	for {
-		switch ev := termbox.PollEvent(); ev.Type {
-		case termbox.EventKey:
-			if ev.Key == termbox.KeyEsc {
-        break loop;
-			}
-      tbprint(0, HEIGHT +10, termbox.ColorGreen, "w")
+
+    if cap(data)-len(data) < 32 {
+      newData  := make([]byte, len(data), len(data)+32)
+      copy(newData, data)
+      data = newData
+    }
+    lenData := len(data)
+
+    d := data[lenData:lenData+32] 
+
+		switch ev := termbox.PollRawEvent(d); ev.Type {
+		case termbox.EventRaw:
+      data = data[:lenData+ev.N]
+      c := fmt.Sprintf("%q", data)
+      if c == `"q"` {
+        break loop
+      }
+      
+      for {
+        ev := termbox.ParseEvent(data);
+        if ev.N == 0 { break }
+        curev := ev
+        copy(data, data[curev.N:])
+        data = data[:len(data)-curev.N]
+      }
+
 		}
     printBorders()
     logic()
