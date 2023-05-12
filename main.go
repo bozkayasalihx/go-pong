@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	HEIGHT = 30
-	WIDTH  = 30
+	HEIGHT = 20
+	WIDTH  = 60
 )
 
 var def = termbox.ColorDefault
@@ -48,15 +48,30 @@ func (g *Game) tbPrint(x,y int, msg string, attr ...termbox.Attribute) {
   }
 }
 
+func (g *Game) handleNavigation() {
+  curNav := g.curNavigationIn;  
+  //NOTE: it should not pass the top border
+  if curNav == `"w"` && g.myPositionY>1{
+    g.myPositionY--;
+
+    //NOTE: ALSO should not pass the bottm border too
+  }else if curNav == `"s"` &&  g.myPositionY < HEIGHT-2 {
+    g.myPositionY++
+  }
+}
+
 
 func (g *Game) draw(){
   termbox.Clear(def, def)
+  g.handleNavigation()
   for i:=0;i<HEIGHT;i++ {
     for j:=0;j<WIDTH;j++ {
       if j== 0 || j == WIDTH-1 || i == 0 || i== HEIGHT-1 {
         g.tbPrint(j, i, "#")
       }else if(j == g.myPositionX && i == g.myPositionY) {
         g.tbPrint(j,i, "|", termbox.ColorGreen)
+      }else if(j == g.aiPositionX && i == g.aiPositionY) {
+        g.tbPrint(j,i, "|", termbox.ColorRed)
       }else {
         g.tbPrint(j,i, " ")
       }
@@ -70,10 +85,10 @@ func (g *Game) draw(){
 func main() {
 	err := termbox.Init()
   game := &Game{
-    myPositionY: HEIGHT /2,   
+    myPositionY: HEIGHT/2,   
     myPositionX: 1, 
-    aiPositionY: HEIGHT /2,
-    aiPositionX: WIDTH -1,
+    aiPositionY: HEIGHT/2,
+    aiPositionX: WIDTH-2,
   }
 
 	if err != nil {
