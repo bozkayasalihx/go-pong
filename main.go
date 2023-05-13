@@ -64,19 +64,19 @@ func (g *Game) handleNavigation() {
 }
 
 
-      // else if(j == g.myPositionX && i == g.myPositionY) {
-      //   g.tbPrint(j,i, "|", termbox.ColorGreen)
-      // }
-
-func (g *Game) draw(){
+func (g *Game) draw() {
   termbox.Clear(def, def)
   g.handleNavigation()
   for i:=0;i<HEIGHT;i++ {
     for j:=0;j<WIDTH;j++ {
       if j== 0 || j == WIDTH-1 || i == 0 || i== HEIGHT-1 {
         g.tbPrint(j, i, "#")
+      }else if (j == WIDTH/2) {
+        g.tbPrint(j,i, ":", termbox.ColorYellow)
       }else if(j == g.aiCoord.X && i == g.aiCoord.Y) {
         g.tbPrint(j,i, "|", termbox.ColorRed)
+      }else if(j == g.myCoord.X && i == g.myCoord.Y) {
+        g.tbPrint(j,i, "|", termbox.ColorGreen)
       }else {
         g.tbPrint(j,i, " ")
       }
@@ -103,16 +103,16 @@ func main() {
 
   data := make([]byte, 0, 64) 
   game.draw()
-  go func() {
-    for {
-      if game.aiCoord.Y == HEIGHT-2 {
-        game.aiCoord.Y = 0 
-      }
-      game.aiCoord.Y++
-      game.draw()
-      time.Sleep(20*time.Millisecond)
-    }
-  }()
+  // go func() {
+  //   for {
+  //     if game.aiCoord.Y == HEIGHT-2 {
+  //       game.aiCoord.Y = 0 
+  //     }
+  //     game.aiCoord.Y++
+  //     game.draw()
+  //     time.Sleep(20*time.Millisecond)
+  //   }
+  // }()
 mainloop:
 	for {
     if cap(data)-len(data) < 32 {
@@ -123,8 +123,6 @@ mainloop:
     lenData := len(data)
 
     d := data[lenData:lenData+32] 
-
-
 
 		switch ev := termbox.PollRawEvent(d); ev.Type {
 		case termbox.EventRaw:
@@ -142,9 +140,8 @@ mainloop:
         copy(data, data[curev.N:])
         data = data[:len(data)-curev.N]
       }
+      game.draw()
 		}
-   
-    game.draw()
     time.Sleep(20*time.Millisecond)
 	}
 }
