@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"time"
+  "math/rand"
 
 	"github.com/nsf/termbox-go"
 )
@@ -22,9 +23,11 @@ type Coord struct {
   Y int
 }
 
+
 type Game struct {
-  myCoord  *Coord
-  aiCoord  *Coord
+  myCoord   *Coord
+  aiCoord   *Coord
+  ballCoord *Coord
   curNavigationIn   string 
 }
 
@@ -80,16 +83,31 @@ func (g *Game) draw() {
       }else {
         g.tbPrint(j,i, " ")
       }
+
+
+      for g.ballCoord.X != 0 ||  g.ballCoord.Y != 0 {
+        if j == g.ballCoord.X && g.ballCoord.Y == i {
+          g.tbPrint(g.ballCoord.X, g.ballCoord.Y, "*", termbox.ColorRed)
+        }
+        g.ballCoord.X--
+        g.ballCoord.Y--
+        if j == g.ballCoord.X && g.ballCoord.Y == i {
+          g.tbPrint(g.ballCoord.X, g.ballCoord.Y, "*", termbox.ColorRed)
+        }
+      }
     }
   }
   termbox.Flush()
 }
 
 func main() {
+
 	err := termbox.Init()
+
   game := &Game{
     myCoord: &Coord{X: 1, Y: HEIGHT/2},
     aiCoord: &Coord{X: WIDTH-2, Y: HEIGHT/2},
+    ballCoord:  &Coord{X:WIDTH/2, Y: rand.Intn(HEIGHT-2)},
   }
 
 	if err != nil {
@@ -98,21 +116,13 @@ func main() {
 	}
 
 	defer termbox.Close()
-
 	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
   data := make([]byte, 0, 64) 
+
+
   game.draw()
-  // go func() {
-  //   for {
-  //     if game.aiCoord.Y == HEIGHT-2 {
-  //       game.aiCoord.Y = 0 
-  //     }
-  //     game.aiCoord.Y++
-  //     game.draw()
-  //     time.Sleep(20*time.Millisecond)
-  //   }
-  // }()
+
 mainloop:
 	for {
     if cap(data)-len(data) < 32 {
