@@ -89,9 +89,7 @@ func (g *Game) draw() {
 }
 
 func main() {
-
 	err := termbox.Init()
-
 	game := &Game{
 		myCoord:   &Coord{X: 1, Y: HEIGHT / 2},
 		aiCoord:   &Coord{X: WIDTH - 2, Y: HEIGHT / 2},
@@ -147,5 +145,4 @@ mainloop:
 			}
 		}
 	}
-
 }
