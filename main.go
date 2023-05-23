@@ -105,14 +105,14 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
 	data := make([]byte, 0, 64)
-	go func() {
-		for game.ballCoord.Y > 1 {
-			game.draw()
-			game.ballCoord.Y++
-			game.draw()
-		}
-		time.Sleep(30 * time.Millisecond)
-	}()
+	// go func() {
+	// 	for game.ballCoord.Y > 1 {
+	// 		game.draw()
+	// 		game.ballCoord.Y++
+	// 		game.draw()
+	// 	}
+	// 	time.Sleep(30 * time.Millisecond)
+	// }()
 	game.draw()
 
 mainloop:
@@ -144,5 +144,8 @@ mainloop:
 				data = data[:len(data)-curev.N]
 			}
 		}
+
+    game.draw()
+    time.Sleep(20*time.Millisecond)
 	}
 }
