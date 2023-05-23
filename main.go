@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"time"
 
@@ -23,12 +22,41 @@ type Coord struct {
 	Y int
 }
 
+type Ball struct {
+  X int
+  Y int 
+  DX int 
+  DY int
+}
+
 type Game struct {
 	myCoord         *Coord
 	aiCoord         *Coord
-	ballCoord       *Coord
+  ballCord        *Ball
 	curNavigationIn string
 }
+
+func (g *Game) move(){
+  g.ballCord.X += g.ballCord.DX
+  g.ballCord.Y += g.ballCord.DY
+
+  if g.ballCord.X < 1 {
+      g.ballCord.X = 0
+      g.ballCord.DX = -g.ballCord.DX
+  } else if g.ballCord.X >= WIDTH-1 {
+      g.ballCord.X = WIDTH-1
+      g.ballCord.DX = -g.ballCord.DX
+  }
+
+  if g.ballCord.Y < 1 {
+      g.ballCord.Y = 0
+      g.ballCord.DY = -g.ballCord.DY
+  } else if g.ballCord.Y >= HEIGHT-1{
+      g.ballCord.Y = HEIGHT-1
+      g.ballCord.DY = -g.ballCord.DY
+  }
+}
+
 
 func (g *Game) navigationPrint(x, y int) {
 	for _, val := range g.curNavigationIn {
@@ -67,7 +95,7 @@ func (g *Game) handleNavigation() {
 
 func (g *Game) draw() {
 	termbox.Clear(def, def)
-	g.handleNavigation()
+  g.handleNavigation()
 	for i := 0; i < HEIGHT; i++ {
 		for j := 0; j < WIDTH; j++ {
 			if j == 0 || j == WIDTH-1 || i == 0 || i == HEIGHT-1 {
@@ -76,14 +104,14 @@ func (g *Game) draw() {
 				g.tbPrint(j, i, ":", termbox.ColorYellow)
 			} else if j == g.aiCoord.X && i == g.aiCoord.Y {
 				g.tbPrint(j, i, "|", termbox.ColorRed)
-			} else if j == g.ballCoord.X && i == g.ballCoord.Y {
-				g.tbPrint(j, i, "*", termbox.ColorRed)
 			} else if j == g.myCoord.X && i == g.myCoord.Y {
 				g.tbPrint(j, i, "|", termbox.ColorGreen)
-			} else {
+			}else if j == g.ballCord.X && i == g.ballCord.Y {
+				g.tbPrint(j, i, "*", termbox.ColorRed)
+      }else {
 				g.tbPrint(j, i, " ")
 			}
-		}
+    }
 	}
 	termbox.Flush()
 }
@@ -93,7 +121,13 @@ func main() {
 	game := &Game{
 		myCoord:   &Coord{X: 1, Y: HEIGHT / 2},
 		aiCoord:   &Coord{X: WIDTH - 2, Y: HEIGHT / 2},
-		ballCoord: &Coord{X: WIDTH/2 - 1, Y: rand.Intn(HEIGHT - 2)},
+    ballCord: &Ball{
+      X: (WIDTH-2) /2, 
+      Y: (HEIGHT-2)/2, 
+      DX: 1,
+      DY: 1,
+    },  
+    
 	}
 
 	if err != nil {
@@ -105,14 +139,6 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc | termbox.InputMouse)
 
 	data := make([]byte, 0, 64)
-	// go func() {
-	// 	for game.ballCoord.Y > 1 {
-	// 		game.draw()
-	// 		game.ballCoord.Y++
-	// 		game.draw()
-	// 	}
-	// 	time.Sleep(30 * time.Millisecond)
-	// }()
 	game.draw()
 
 mainloop:
@@ -145,6 +171,7 @@ mainloop:
 			}
 		}
 
+    game.move()
     game.draw()
     time.Sleep(20*time.Millisecond)
 	}
