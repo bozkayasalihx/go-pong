@@ -84,10 +84,8 @@ func (g *Game) tbPrint(x, y int, msg string, attr ...termbox.Attribute) {
 
 func (g *Game) handleNavigation() {
 	curNav := g.curNavigationIn
-	//NOTE: it should not pass the top border
 	if curNav == `"w"` && g.myCoord.Y > 1 {
 		g.myCoord.Y--
-		//NOTE: ALSO should not pass the bottm border too
 	} else if curNav == `"s"` && g.myCoord.Y < HEIGHT-2 {
 		g.myCoord.Y++
 	}
@@ -140,6 +138,13 @@ func main() {
 
 	data := make([]byte, 0, 64)
 	game.draw()
+  go func () {
+    for {
+      game.move()
+      game.draw()
+      time.Sleep(60*time.Millisecond)
+    }
+  }()
 
 mainloop:
 	for {
@@ -171,7 +176,6 @@ mainloop:
 			}
 		}
 
-    game.move()
     game.draw()
     time.Sleep(20*time.Millisecond)
 	}
