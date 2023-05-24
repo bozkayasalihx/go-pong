@@ -2,23 +2,15 @@ package paints
 
 import (
 	"strings"
-
 	"github.com/nsf/termbox-go"
 )
 
+//NOTE:
+//{["||||"], ["|"], ["|"]}
 
-
-var wall string = `|||||
+var wall string = `| 
                    |
                    |`
-
-var font = map[rune][][]rune{
-  'p': asArray(wall),
-}
-
-
-//NOTE: 
-//{["||||"], ["|"], ["|"]}
 
 func asArray(chars string) [][]rune {
   result := [][]rune{}
@@ -36,9 +28,9 @@ func asArray(chars string) [][]rune {
 }
 
 
-func DrawChar(x,y int, char rune, color termbox.Attribute) (ux int, uy int) {
+func DrawChar(x,y int,color termbox.Attribute) (ux int, uy int) {
   uy = y
-  v := font[char]
+  v := asArray(wall)
   if v == nil {
     panic("font not found")
   }
@@ -46,7 +38,7 @@ func DrawChar(x,y int, char rune, color termbox.Attribute) (ux int, uy int) {
   for _, cSlice := range v {
     ux = x
     for _, c := range cSlice {
-      termbox.SetCell(ux, uy, c, color, termbox.ColorDefault )
+      termbox.SetCell(ux, uy, c, color, termbox.ColorDefault)
       ux++
     }
     uy++
@@ -54,4 +46,3 @@ func DrawChar(x,y int, char rune, color termbox.Attribute) (ux int, uy int) {
 
   return ux, uy
 }
-
