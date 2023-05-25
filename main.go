@@ -39,7 +39,6 @@ type Game struct {
 
 //NOTE: complex shape  paiting
 
-
 var userWall = `|
                 |
                 |`
@@ -58,7 +57,6 @@ func asArray(chars string) [][]rune {
 
   return result
 }
-
 
 func drawChar(x,y int, color termbox.Attribute) {
   paint := asArray(userWall)
