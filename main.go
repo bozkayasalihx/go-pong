@@ -36,41 +36,6 @@ type Game struct {
 	curNavigationIn string
 }
 
-
-//NOTE: complex shape  paiting
-
-var userWall = `|
-                |
-                |`
-
-func asArray(chars string) [][]rune {
-  result := [][]rune{}
-  sectionByLine := []rune{}
-  for _, c := range chars {
-    if c == '\n' {
-      result = append(result, sectionByLine)
-      sectionByLine = []rune{}
-    }else {
-      sectionByLine = append(sectionByLine, c)
-    }
-  }
-
-  return result
-}
-
-func drawChar(x,y int, color termbox.Attribute) {
-  paint := asArray(userWall)
-  for _, p := range paint {
-    for _, c := range p {
-      termbox.SetCell(x,y, c , color, termbox.ColorDefault)
-      x++
-    }
-    y++
-  }
-}
-
-//NOTE: ends here
-
 func (g *Game) move(){
   g.ballCord.X += g.ballCord.DX
   g.ballCord.Y += g.ballCord.DY
@@ -138,8 +103,7 @@ func (g *Game) draw() {
 			} else if j == g.aiCoord.X && i == g.aiCoord.Y {
 				g.tbPrint(j, i, "|", termbox.ColorRed)
 			} else if j == g.myCoord.X && i == g.myCoord.Y {
-				// g.tbPrint(j, i, "|", termbox.ColorGreen)
-        drawChar(j,i, termbox.ColorGreen)
+				g.tbPrint(j, i, "|", termbox.ColorGreen)
 			}else if j == g.ballCord.X && i == g.ballCord.Y {
 				g.tbPrint(j, i, "*", termbox.ColorRed)
       }else {
