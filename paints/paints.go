@@ -13,13 +13,14 @@ var wall string = `|
                    |`
 
 func asArray(chars string) [][]rune {
-  result := [][]rune{}
-  line := []rune{}
+  var result [][]rune
+  var line  []rune
   str := strings.TrimPrefix(chars, "\n")
   for _, c := range str {
     if c == '\n' {
       result = append(result, line)
-      line = []rune{} 
+      //NOTE: gained performans gains while each iteration 
+      line = line[:0]
     }else {
       line = append(line, c)
     }
